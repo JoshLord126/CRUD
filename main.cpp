@@ -13,7 +13,7 @@ struct Estudiante{
 	int telefono;
 };
 void buscar_codigo(){
-	FILE* archivo = fopen(nombe_archivo,"rb");	
+	FILE* archivo = fopen(nombe_archivo,"r");	
 	int cod=0;
 	
 	cout<<"Que codigo desea ver: ";
@@ -28,7 +28,7 @@ void buscar_codigo(){
 			cout<<"Nombres: "<<estudiante.nombre<<endl;
 			cout<<"Apellidos: "<<estudiante.apellido<<endl;
 			cout<<"Telefono: "<<estudiante.telefono<<endl;
-			cout<<"Telefono: "<<estudiante.direccion<<endl;
+			cout<<"Direccion: "<<estudiante.direccion<<endl;
 	   }
 		fread(&estudiante,sizeof(Estudiante),1,archivo);	
 	}while(feof(archivo)==0);
@@ -37,9 +37,9 @@ void buscar_codigo(){
 }
 void mostrar_estudiante(){
 	system("cls");
-	FILE* archivo = fopen(nombe_archivo, "rb");
+	FILE* archivo = fopen(nombe_archivo, "r");
 	if(!archivo) {
-		archivo = fopen(nombe_archivo, "w+b");
+		archivo = fopen(nombe_archivo, "w+");
 	}
 	
 	Estudiante estudiante;
@@ -61,10 +61,15 @@ void mostrar_estudiante(){
 	}
 void ingresar_estudiante(){
 	char continuar;
-	FILE* archivo = fopen(nombe_archivo, "ab");
+	FILE* archivo = fopen(nombe_archivo, "a");
 	
 	Estudiante estudiante;
-	string nombre,apellido, direccion;
+	
+	string nombre, apellido, direccion;
+	char *p_nombre = new char[50];
+	char *p_apellido = new char[50];
+	char *p_direccion = new char[150];
+	
 	
 	do{
 		fflush(stdin);		
@@ -74,19 +79,32 @@ void ingresar_estudiante(){
         
 		cout<<"Ingrese el nombre: ";
 		getline(cin,nombre);
-    	strcpy(estudiante.nombre, nombre.c_str()); 
+		for(int i=0; i<=nombre.length(); i++){
+			p_nombre[i] = nombre[i];
+			estudiante.nombre[i] = p_nombre[i];
+		}
+		//strcpy(estudiante.nombre, nombre.c_str()); 
 			
 		cout<<"Ingrese el apellido: ";
 		getline(cin,apellido);
-		strcpy(estudiante.apellido, apellido.c_str()); 
-		
-		cout<<"Ingrese el telefono: ";
+		for(int i=0; i<=apellido.length(); i++){
+			p_apellido[i] = apellido[i];
+			estudiante.apellido[i] = p_apellido[i];
+		}
+		//strcpy(estudiante.apellido, apellido.c_str()); 
+		        
+        cout<<"Ingrese el telefono: ";
 		cin>>estudiante.telefono;
 		cin.ignore();
 		
 		cout<<"Ingrese la direccion: ";
 		getline(cin,direccion);
-		strcpy(estudiante.direccion, direccion.c_str()); 
+		for(int i=0; i<=direccion.length(); i++){
+			p_direccion[i] = direccion[i];
+			estudiante.direccion[i] = p_direccion[i];
+		}
+		//strcpy(estudiante.direccion, direccion.c_str()); 
+		
 		
 		fwrite( &estudiante, sizeof(Estudiante), 1, archivo );
 		
@@ -96,10 +114,14 @@ void ingresar_estudiante(){
 		
 	
 	fclose(archivo);
+	delete[] p_nombre;
+	delete[] p_apellido;
+	delete[] p_direccion;
+	
 	mostrar_estudiante();
 }
 void modificar_estudiante(){
-	FILE* archivo = fopen(nombe_archivo, "r+b");
+	FILE* archivo = fopen(nombe_archivo, "r+");
 	
 	int id;
 	string nombre,apellido, direccion;	
@@ -136,7 +158,7 @@ void modificar_estudiante(){
 	system("PAUSE");
 }
 void eliminar_estudiante(){
-	FILE* archivo = fopen(nombe_archivo, "r+b");
+	FILE* archivo = fopen(nombe_archivo, "r+");
 	int id;
 	Estudiante estudiante;
 	
@@ -153,34 +175,40 @@ void eliminar_estudiante(){
 }
 int main (){
 	int op;
-
-	cout<<"Mostrar informacion..............1"<<endl;
-	cout<<"Ingresar alumno..................2"<<endl;
-	cout<<"Modificar alumno.................3"<<endl;
-	cout<<"Buscar alumno....................4"<<endl;
-	cout<<"Eliminar alumno..................5"<<endl<<endl<<endl;
-	cout<<"Seleccione una opcion: ";
-	cin>>op;
-	
-	switch(op){
-		case 1:
-			mostrar_estudiante();
-		break;
-		case 2:
-			ingresar_estudiante();
-		break;
-		case 3:
-			mostrar_estudiante();
-			modificar_estudiante();
-		break;
-		case 4:
-			buscar_codigo();
-		break;
-		case 5:
-			eliminar_estudiante();
-		break;
-	}
-			
+	char continuar;
+	do{
+		cout<<"Mostrar informacion..............1"<<endl;
+		cout<<"Ingresar alumno..................2"<<endl;
+		cout<<"Modificar alumno.................3"<<endl;
+		cout<<"Buscar alumno....................4"<<endl;
+		cout<<"Eliminar alumno..................5"<<endl<<endl<<endl;
+		cout<<"Seleccione una opcion: ";
+		cin>>op;
+		
+		switch(op){
+			case 1:
+				mostrar_estudiante();
+			break;
+			case 2:
+				ingresar_estudiante();
+			break;
+			case 3:
+				mostrar_estudiante();
+				modificar_estudiante();
+			break;
+			case 4:
+				buscar_codigo();
+			break;
+			case 5:
+				eliminar_estudiante();
+			break;
+		}
+		
+		cout<<"Desea continuar s/n : ";
+		cin>>continuar;
+		system("cls");
+	} while((continuar=='s') || (continuar=='S'));
+		
 	return 0;	
 }
 
